@@ -114,7 +114,25 @@ jobs:
             cd frontend
             npm install
             npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical 
+            npm audit --audit-level=critical
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "*This is fail notification for job:scan-backen",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: fail
+   
 
   
 
@@ -131,11 +149,7 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
-  notify:
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
+      
       - slack/notify:
           custom: |
             {
@@ -145,15 +159,15 @@ jobs:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "*This is a text notification*",
+                      "text": "*This is fail notification for job:scan-backen",
                       "emoji": true
                     }
                   ]
                 }
               ]
             }
-          event: always
-
+          event: fail
+  
 workflows:
   default:
     jobs:
@@ -165,8 +179,9 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
+          context:MyFirstPjtNotification
       - scan-backend:
           requires: [build-backend]
-      - notify:
-          context: slack-secrets
+          context:MyFirstPjtNotification
+      
   
