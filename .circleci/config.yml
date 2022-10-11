@@ -124,7 +124,7 @@ jobs:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "*This is notification for job:scan-frontend",
+                      "text": "*This is casual notification for job:scan-frontend",
                       "emoji": true
                     }
                   ]
@@ -159,7 +159,7 @@ jobs:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "*This is  notification for job:scan-backend",
+                      "text": "*This is failed notification for job:scan-backend",
                       "emoji": true
                     }
                   ]
