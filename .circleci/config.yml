@@ -124,14 +124,14 @@ jobs:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "*This is fail notification for job:scan-backen",
+                      "text": "*This is notification for job:scan-frontend",
                       "emoji": true
                     }
                   ]
                 }
               ]
             }
-          event: fail
+          event: always
    
 
   
@@ -159,14 +159,14 @@ jobs:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "*This is fail notification for job:scan-backen",
+                      "text": "*This is  notification for job:scan-backend",
                       "emoji": true
                     }
                   ]
                 }
               ]
             }
-          event: fail
+          event: always
   
 workflows:
   default:
