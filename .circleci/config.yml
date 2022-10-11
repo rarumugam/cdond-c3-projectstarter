@@ -166,7 +166,7 @@ jobs:
                 }
               ]
             }
-          event: always
+          event: fail
   
 workflows:
   default:
@@ -182,6 +182,5 @@ workflows:
           context: MyFirstPjtNotification
       - scan-backend:
           requires: [build-backend]
-          context: MyFirstPjtNotification
-      
+          context: MyFirstPjtNotification  
   
