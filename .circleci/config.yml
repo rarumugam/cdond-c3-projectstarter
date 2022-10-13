@@ -6,11 +6,13 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here   
+      event:
+        type: string:
+      
     steps:
       - run:
           name: Destroy environments
-          when: on_fail
+          when: << parameters.event >>
           command: |
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
@@ -149,7 +151,7 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
+           
       - slack/notify:
           custom: |
             {
