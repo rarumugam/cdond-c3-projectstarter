@@ -212,7 +212,7 @@ jobs:
           
       - destroy-environment:
             event: on_fail
-configure-infrastructure:
+  configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
       - image: python:3.7-alpine3.11
@@ -253,7 +253,7 @@ configure-infrastructure:
           command: |
             # Your code here
             cd .circleci/ansible/ 
-              ansible-playbook -i inventory.txt configure-server.yml 
+            ansible-playbook -i inventory.txt configure-server.yml 
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
               event: on_fail
