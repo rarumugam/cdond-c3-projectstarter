@@ -212,6 +212,51 @@ jobs:
           
       - destroy-environment:
             event: on_fail
+configure-infrastructure:
+    docker:
+      # Docker image here that supports Ansible
+      - image: python:3.7-alpine3.11
+    steps:
+      # Checkout code from git
+      - checkout
+      # Add ssh keys with fingerprint
+      - add_ssh_keys:
+          fingerprints: ["a5:fb:f3:b6:f7:e3:6c:7f:cd:96:39:2a:12:25:fc:90"]
+
+      - attach_workspace:
+            at: ~/ 
+      # attach workspace
+      - run:
+          name: Install dependencies
+          command: |
+            # Your code 
+              apk update
+              apk upgrade
+              apk add unzip 
+              apk add curl
+              /usr/local/bin/python -m pip install --upgrade pip
+      - run:
+            name: Install ansible
+            command: |
+              # your code here              
+              apk add --update ansible 
+              ansible --version
+      - run:
+            name: Install aws
+            command: |
+              # your code here                           
+              pip install awscli --upgrade   
+              aws --version       
+      
+      - run:
+          name: Configure server
+          command: |
+            # Your code here
+            cd .circleci/ansible/ 
+              ansible-playbook -i inventory.txt configure-server.yml 
+      # Here's where you will add some code to rollback on failure  
+      - destroy-environment:
+              event: on_fail
 workflows:
   default:
     jobs:
@@ -229,3 +274,5 @@ workflows:
           context: MyFirstPjtNotification  
       - deploy-infrastructure :
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - configure-infrastructure :
+      
