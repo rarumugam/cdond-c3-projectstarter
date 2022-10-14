@@ -212,6 +212,7 @@ jobs:
           
       - destroy-environment:
             event: on_fail
+  
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
@@ -257,6 +258,29 @@ jobs:
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
               event: on_fail
+
+  run-migrations:
+    docker:
+      # Docker image here that supports NodeJS
+      - image: 
+        circleci/node:13.8.0
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Run migrations
+          command: |
+              cd backend
+              npm install
+             # Run and save the migration output
+              npm run migrations > migrations_dump.txt
+            
+      - run:
+          name: Send migration results to memstash
+          command: |
+            # Your code here
+            exit 1
+     # Here's where you will add some code to rollback on failure      
 workflows:
   default:
     jobs:
@@ -276,3 +300,5 @@ workflows:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       - configure-infrastructure :
           requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
