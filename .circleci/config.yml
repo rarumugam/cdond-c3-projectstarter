@@ -286,7 +286,9 @@ jobs:
           command: |
             # Your code here
             cd backend
-            npm run install
+            npm cache clean
+            npm install
+            npm run build
             # Run and sve the migration output
             npm run migrations > migrations_dump.txt
             echo `cat migrations_dump.txt`
