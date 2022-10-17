@@ -276,11 +276,11 @@ jobs:
             apk add curl
             /usr/local/bin/python -m pip install --upgrade pip    
       - run:
-            name: Install node
-            command: |
-              apk add --update nodejs nodejs-npm
-              node --version
-              npm --version
+          name: Install node
+          command: |
+            apk add --update nodejs nodejs-npm
+            node --version
+            npm --version
       - run:
           name: Run migrations
           command: |
@@ -297,10 +297,12 @@ jobs:
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               echo "migration successfull"
-              curl -H "Content-Type: text/plain" -H "token: f8c96b04-eedf-4709-a46e-a229beb2abb0" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+              # curl -H "Content-Type: text/plain" -H "token: f8c96b04-eedf-4709-a46e-a229beb2abb0" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+              curl https://kvdb.io/8opAbxPGLJrMEys5SyBN61/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             else
               echo "migration was not created"
-              curl -H "Content-Type: text/plain" -H "token: f8c96b04-eedf-4709-a46e-a229beb2abb0" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+              # curl -H "Content-Type: text/plain" -H "token: f8c96b04-eedf-4709-a46e-a229beb2abb0" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+              curl https://kvdb.io/8opAbxPGLJrMEys5SyBN61/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '0'
             fi
      # Here's where you will add some code to rollback on failure
       - destroy-environment:
@@ -325,5 +327,5 @@ workflows:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       - configure-infrastructure :
           requires: [deploy-infrastructure]
-      #- run-migrations:
-       #   requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
