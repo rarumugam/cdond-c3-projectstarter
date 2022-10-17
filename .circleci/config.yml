@@ -286,7 +286,6 @@ jobs:
           command: |
             # Your code here
             cd backend
-           #npm cache clean
             npm install
             npm run build
             # Run and sve the migration output
