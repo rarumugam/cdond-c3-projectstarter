@@ -95,7 +95,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [test-backend]
+          keys: [backend-build]
       - run:
           name: Run Backend Test
           command: |            
@@ -144,13 +144,15 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [scan-backend]
+          keys: [backend-build]
       - run:
-          name: Run scan-backend Test
+          name: Run scan-backend 
           command: |            
             cd backend
             npm install
+            npm install --save-dev ts-loader@9.2.6
             npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
            
       - slack/notify:
           custom: |
@@ -400,6 +402,29 @@ jobs:
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
               event: on_fail  
+smoke-test:
+    docker:
+      # Lightweight Docker image 
+    steps:
+      # Checkout code from git
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+      - run:
+          name: Backend smoke test.
+          command: |
+            # your code here
+      - run:
+          name: Frontend smoke test.
+          command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure  
+
 
 workflows:
   default:
@@ -425,4 +450,6 @@ workflows:
       - deploy-frontend:
           requires: [run-migrations]
       - deploy-backend:
-          requires: [run-migrations]         
+          requires: [run-migrations]
+      #- smoke-test:
+        #  requires: [deploy-backend, deploy-frontend]         
