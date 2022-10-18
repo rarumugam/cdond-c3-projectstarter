@@ -2,8 +2,9 @@
 - name: copy  local to remote file
   become: true
   copy:
-        src: artifact.tar.gz
-        dest: /home/ubuntu
+    src: ~/project/artifact.tar.gz
+    dest: /home/ubuntu/artifact.tar.gz
+
 
 - name: Creates directory
   file:
@@ -11,9 +12,12 @@
     state: directory
 
 - name: Extract 'artifact.tar.gz' into '/home/ubuntu/backend'
-  ansible.builtin.unarchive:
-    src: artifact.tar.gz
-    dest: /home/ubuntu/backend
+  become: true
+  shell: |
+    cd /home/ubuntu/backend
+    tar -vxf artifact.tar.gz
+    rm artifact.tar.gz
+
 
 - name: Executing node
   become: true
