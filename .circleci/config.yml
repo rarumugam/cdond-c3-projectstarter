@@ -308,6 +308,7 @@ jobs:
      # Here's where you will add some code to rollback on failure
       - destroy-environment:
               event: on_fail
+  
   deploy-frontend:
     docker:
       # Docker image here that supports AWS CLI
@@ -342,6 +343,8 @@ jobs:
       # Here's where you will add some code to rollback on failure      
       - destroy-environment:
               event: on_fail              
+
+
 workflows:
   default:
     jobs:
@@ -364,6 +367,4 @@ workflows:
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
-          requires: [run-migrations]
-     # - deploy-backend:
-     #     requires: [run-migrations]
+          requires: [run-migrations]     
