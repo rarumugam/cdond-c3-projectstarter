@@ -511,17 +511,6 @@ jobs:
           command: |
             # your code here
       - run:
-          name: Update cloudfront distribution
-          command: |
-            # your code here
-      - run:
-          name: Install dependencies
-          command: |
-            sudo apt update && sudo apt upgrade -y
-            sudo apt install curl 
-            sudo apt install tar 
-            sudo apt install python3
-      - run:
           name: Grab old stack workflow id
           command: |
             export OLD_WORKFLOW_ID=$(aws cloudformation \
@@ -537,6 +526,7 @@ jobs:
              --stack-name InitialStack-${OLD_WORKFLOW_ID} \
              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
              --tags project=udapeople
+            
              echo "Cloudfront distribution updated"
              echo OldworkflowID: "${OLD_WORKFLOW_ID}"
              echo CurrentworkflowID:"${CIRCLE_WORKFLOW_ID:0:7}"
