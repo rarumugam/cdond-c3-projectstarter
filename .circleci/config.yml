@@ -489,11 +489,58 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-              # Change this to 0 after the job fails
-              return 1
+              # Change this to 0 after the job fails -fixed
+              return 0
             else
               return 1
             fi
+      # Here's where you will add some code to rollback on failure  
+      - destroy-environment:
+          event: on_fail
+      - revert-migrations
+
+  cloudfront-update:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            # your code here
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt update && sudo apt upgrade -y
+            sudo apt install curl 
+            sudo apt install tar 
+            sudo apt install python3
+      - run:
+          name: Grab old stack workflow id
+          command: |
+            export OLD_WORKFLOW_ID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
+            echo $OLD_WORKFLOW_ID  >> ~/oldworkflowid.txt
+            cat ~/oldworkflowid.txt
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy 
+             --template-file .circleci/files/cloudfront.yml \
+             --stack-name InitialStack-${OLD_WORKFLOW_ID} \
+             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+             --tags project=udapeople
+             echo "Cloudfront distribution updated"
+             echo OldworkflowID: "${OLD_WORKFLOW_ID}"
+             echo CurrentworkflowID:"${CIRCLE_WORKFLOW_ID:0:7}"
+
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
           event: on_fail
@@ -526,4 +573,6 @@ workflows:
       - deploy-backend:
           requires: [run-migrations]
       - smoke-test:
-          requires: [deploy-backend, deploy-frontend]         
+          requires: [deploy-backend, deploy-frontend]   
+      - cloudfront-update:
+          requires: [smoke-tests]      
