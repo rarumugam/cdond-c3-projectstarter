@@ -24,17 +24,16 @@ commands:
     steps:
       - run:
           name: Revert migrations
-          # Add when this will run
+          when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
+            SUCCESS=$(curl --insecure  https://kvdb.io/8opAbxPGLJrMEys5SyBN61/migration_${CIRCLE_WORKFLOW_ID:0:7})
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
-            fi
+              cd ~/project/backend
+              npm install
+              npm run migration:revert
+            fi  
             
 jobs:
   build-frontend:
@@ -322,6 +321,8 @@ jobs:
      # Here's where you will add some code to rollback on failure
       - destroy-environment:
               event: on_fail
+      
+      - revert-migrations
   
   deploy-frontend:
     docker:
@@ -396,7 +397,22 @@ jobs:
           name: Install aws
           command: |
             pip install awscli --upgrade   
-            aws --version         
+            aws --version   
+      - run:
+          name: Configure Env File
+          command: |
+            echo NODE_ENV=production >> backend/.env
+            echo VERSION=1 >> backend/.env
+            echo TYPEORM_CONNECTION=postgres >> backend/.env
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> backend/.env
+            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+            cat backend/.env                  
       - run:
           name: Deploy backend
           command: |
@@ -413,7 +429,10 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
-              event: on_fail  
+              event: on_fail
+
+      - revert-migrations
+
   smoke-test:
     docker:
       # Lightweight Docker image 
@@ -474,6 +493,9 @@ jobs:
               return 1
             fi
       # Here's where you will add some code to rollback on failure  
+      - destroy-environment:
+          event: on_fail
+      - revert-migrations
 
 
 workflows:
