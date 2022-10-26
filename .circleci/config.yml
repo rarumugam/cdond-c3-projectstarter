@@ -576,8 +576,8 @@ workflows:
         
         filters:
           branches: 
-            only: [dev-branch, master]
-            
+            only: [master]
+
       - build-backend
               
       - test-frontend:
