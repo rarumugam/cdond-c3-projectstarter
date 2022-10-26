@@ -578,70 +578,70 @@ workflows:
       - build-frontend
           filters:
               branches: 
-                  only: [ dev-branch, master]
+                only: [ dev-branch, master]
       - build-backend
           filters:
               branches: 
-                  only: [ dev-branch, master]
+                only: [ dev-branch, master]
       - test-frontend:
           filters:
               branches: 
-                  only: [ dev-branch, master]
+                only: [ dev-branch, master]
           requires: [build-frontend]
       - test-backend:
           filters:
               branches: 
-                  only: [ dev-branch, master]
+                only: [ dev-branch, master]
           requires: [build-backend]
       - scan-frontend:
           filters:
               branches: 
-                  only: [ dev-branch, master]
+                only: [ dev-branch, master]
           requires: [build-frontend]
           context: MyFirstPjtNotification
       - scan-backend:
           filters:
               branches: 
-                  only: [ dev-branch, master]
+                only: [ dev-branch, master]
           requires: [build-backend]
           context: MyFirstPjtNotification  
       - deploy-infrastructure :
           filters:
               branches: 
-                  only:  master
+                only:  master
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       - configure-infrastructure :
           filters:
               branches: 
-                  only:  master 
+                only:  master 
           requires: [deploy-infrastructure]
       - run-migrations:
           filters:
               branches: 
-                  only:  master 
+                only:  master 
           requires: [configure-infrastructure]
       - deploy-frontend:
           filters:
               branches: 
-                  only:  master 
+                only:  master 
           requires: [run-migrations]
       - deploy-backend:
           filters:
               branches: 
-                  only:  master 
+                only:  master 
           requires: [run-migrations]
       - smoke-test:
           filters:
               branches: 
-                  only:  master 
+                only:  master 
           requires: [deploy-backend, deploy-frontend]   
       - cloudfront-update:
           filters:
               branches: 
-                  only:  master 
+                only:  master 
           requires: [smoke-test]  
       - cleanup:
           filters:
               branches:
-                  only: master
+                only: master
           requires: [cloudfront-update]    
