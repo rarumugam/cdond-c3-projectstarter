@@ -577,7 +577,42 @@ workflows:
     jobs:
 
       - build-frontend
-          filters
-            branches 
-              only [dev-branch, master]
-       
+          
+      - build-backend
+              
+      - test-frontend:
+          
+          requires: [build-frontend]
+
+      - test-backend:
+          requires: [build-backend]
+      
+      - scan-frontend:
+      
+          requires: [build-frontend]
+          context: MyFirstPjtNotification
+      - scan-backend:
+      
+          requires: [build-backend]
+          context: MyFirstPjtNotification  
+      - deploy-infrastructure :
+      
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - configure-infrastructure :
+      
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+      
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+      
+          requires: [deploy-backend, deploy-frontend]   
+      - cloudfront-update:
+      
+          requires: [smoke-test]  
+      - cleanup:
+          requires: [cloudfront-update]    
