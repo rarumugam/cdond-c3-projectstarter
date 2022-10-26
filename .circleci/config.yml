@@ -573,9 +573,9 @@ workflows:
     jobs:
 
       - build-frontend
-          filters:
-            branches: 
-              only: [ dev-branch, master]
+        filters:
+          branches: 
+            only: [dev-branch, master]
       - build-backend
               
       - test-frontend:
