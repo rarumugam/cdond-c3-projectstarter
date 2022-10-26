@@ -575,11 +575,11 @@ jobs:
 workflows:
   default:
     jobs:
-    
+
       - build-frontend
           filters
             branches 
-              only: [dev-branch, master]
+              only [dev-branch, master]
       - build-backend
           filters:
             branches: 
