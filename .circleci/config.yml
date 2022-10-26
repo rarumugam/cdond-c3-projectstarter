@@ -576,33 +576,33 @@ workflows:
   default:
     jobs:
       - build-frontend
-          filters:
+          filters
             branches: 
-              only: [ dev-branch, master]
+              only: [dev-branch, master]
       - build-backend
           filters:
             branches: 
-              only: [ dev-branch, master]
+              only: [dev-branch, master]
       - test-frontend:
           filters:
             branches: 
-              only: [ dev-branch, master]
+              only: [dev-branch, master]
           requires: [build-frontend]
       - test-backend:
           filters:
             branches: 
-              only: [ dev-branch, master]
+              only: [dev-branch, master]
           requires: [build-backend]
       - scan-frontend:
           filters:
             branches: 
-              only: [ dev-branch, master]
+              only: [dev-branch, master]
           requires: [build-frontend]
           context: MyFirstPjtNotification
       - scan-backend:
           filters:
             branches: 
-              only: [ dev-branch, master]
+              only: [dev-branch, master]
           requires: [build-backend]
           context: MyFirstPjtNotification  
       - deploy-infrastructure :
