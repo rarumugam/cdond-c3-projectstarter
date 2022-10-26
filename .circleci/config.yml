@@ -572,10 +572,12 @@ workflows:
   default:
     jobs:
 
-      -build-frontend
+      - build-frontend
+        
         filters:
           branches: 
             only: [dev-branch, master]
+            
       - build-backend
               
       - test-frontend:
